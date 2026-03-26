@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js build output
+.next/
+out/
+
+# Environment files with secrets — NEVER COMMIT
+.env.local
+.env.production.local
+.env*.local
+
+# Database files — NEVER COMMIT
+assets/database/
+*.db
+*.db-wal
+*.db-shm
+
+# Build artifacts
+*.tar.gz
+deploy-*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*

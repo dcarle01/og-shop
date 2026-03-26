@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="300">
+  <title>Open Gateways — Maintenance</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #091828 0%, #0e2640 40%, #132f4f 70%, #091828 100%);
+      color: #e0e8f0;
+      overflow: hidden;
+    }
+
+    /* Subtle animated background orbs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 20s ease-in-out infinite;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #4171b8, transparent 70%);
+      top: -100px; left: -100px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #5a9bd5, transparent 70%);
+      bottom: -80px; right: -80px;
+      animation-delay: -10s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -20px) scale(1.05); }
+      66% { transform: translate(-20px, 15px) scale(0.95); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem;
+      max-width: 520px;
+      width: 90%;
+    }
+
+    /* Glassmorphism card */
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(65, 113, 184, 0.2);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.75rem;
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+      color: #e8f0f8;
+    }
+
+    p {
+      font-weight: 300;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #a8bdd4;
+      margin-bottom: 0.5rem;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(65, 113, 184, 0.4), transparent);
+      margin: 1.5rem auto;
+    }
+
+    .lang-toggle {
+      margin-top: 1.5rem;
+    }
+    .lang-toggle button {
+      background: rgba(65, 113, 184, 0.1);
+      border: 1px solid rgba(65, 113, 184, 0.25);
+      color: #a8bdd4;
+      padding: 0.4rem 1rem;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .lang-toggle button:hover {
+      background: rgba(65, 113, 184, 0.2);
+      color: #e8f0f8;
+    }
+
+    /* Dot pulse animation */
+    .pulse-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #4171b8;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #8a9db5;
+    }
+
+    /* Language sections */
+    .lang-en, .lang-es { display: none; }
+    .lang-en.active, .lang-es.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- Header bar -->
+  <header style="
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    background: #ffffff;
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.15);
+  ">
+    <img
+      src="https://opengateways.com/assets/images/shared/OG_logo_2025.png"
+      alt="Open Gateways"
+      style="height: 40px; width: auto;"
+    >
+  </header>
+
+  <div class="container" style="margin-top: 60px;">
+    <div class="card">
+      <span class="icon">🔧</span>
+
+      <!-- English -->
+      <div class="lang-en active" id="content-en">
+        <h1>We'll Be Right Back</h1>
+        <p>We're performing a brief maintenance update to improve your experience.</p>
+        <p>Please check back shortly.</p>
+        <div class="divider"></div>
+        <p>Thank you for your patience.</p>
+      </div>
+
+      <!-- Spanish -->
+      <div class="lang-es" id="content-es">
+        <h1>Regresamos Pronto</h1>
+        <p>Estamos realizando una breve actualización de mantenimiento para mejorar tu experiencia.</p>
+        <p>Por favor, intenta de nuevo en unos minutos.</p>
+        <div class="divider"></div>
+        <p>Gracias por tu paciencia.</p>
+      </div>
+
+      <div class="status">
+        <span class="pulse-dot"></span>
+        <span class="lang-en active" style="display:inline" id="status-en">Maintenance in progress</span>
+        <span class="lang-es" style="display:none" id="status-es">Mantenimiento en proceso</span>
+      </div>
+
+      <div class="lang-toggle">
+        <button onclick="toggleLang()">
+          <span id="toggle-label">Español</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentLang = 'en';
+
+    // Auto-detect browser language
+    (function() {
+      const browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+      if (browserLang.startsWith('es')) {
+        setLang('es');
+      }
+    })();
+
+    function toggleLang() {
+      setLang(currentLang === 'en' ? 'es' : 'en');
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-en').forEach(el => {
+        el.classList.toggle('active', lang === 'en');
+        if (el.style.display !== undefined && el.id) el.style.display = lang === 'en' ? 'inline' : 'none';
+      });
+      document.querySelectorAll('.lang-es').forEach(el => {
+        el.classList.toggle('active', lang === 'es');
+        if (el.style.display !== undefined && el.id) el.style.display = lang === 'es' ? 'inline' : 'none';
+      });
+      document.getElementById('toggle-label').textContent = lang === 'en' ? 'Español' : 'English';
+      document.documentElement.lang = lang;
+    }
+  </script>
+
+</body>
+</html>

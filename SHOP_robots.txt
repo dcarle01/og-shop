@@ -1,0 +1,91 @@
+# Open Gateways Shop - Robots.txt
+# shop.opengateways.com
+# Author: Dale Carley
+# Last Updated: March 2026
+#
+# Digital product storefront — product and category pages are indexable
+# for SEO, but API, checkout, confirmation, and download routes are blocked.
+
+# =============================================================================
+# BLOCK AGGRESSIVE / HARMFUL CRAWLERS
+# The shop's product catalog is a high-value crawl target for SEO scrapers
+# and AI training bots. These are blocked here and in .htaccess.
+# =============================================================================
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: FeedValidator
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: serpstatbot
+Disallow: /
+
+User-agent: SEOkicks
+Disallow: /
+
+# =============================================================================
+# LEGITIMATE SEARCH ENGINES
+# Allow indexing of public product content with a crawl delay.
+# =============================================================================
+
+User-agent: Googlebot
+Crawl-delay: 10
+Disallow: /api/
+Disallow: /_next/
+Disallow: /checkout
+Disallow: /confirmation
+Disallow: /register
+Disallow: /login
+
+User-agent: Bingbot
+Crawl-delay: 10
+Disallow: /api/
+Disallow: /_next/
+Disallow: /checkout
+Disallow: /confirmation
+Disallow: /register
+Disallow: /login
+
+# =============================================================================
+# ALL OTHER CRAWLERS
+# =============================================================================
+
+User-agent: *
+Crawl-delay: 15
+
+# Block API and Next.js internals
+Disallow: /api/
+Disallow: /_next/
+
+# Block transactional and user-specific pages
+Disallow: /checkout
+Disallow: /confirmation
+Disallow: /register
+Disallow: /login
+
+# Allow public-facing storefront pages
+Allow: /
+Allow: /products/
+Allow: /products
