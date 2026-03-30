@@ -1,5 +1,5 @@
 // SHOP_src_components_ProductCard.tsx
-// Version: 2.1.0 | Created: 2026-01-28 | Last Modified: 2026-03-14 | Author: Open Gateways Team
+// Version: 2.1.2 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
 // Description: Product card component — dynamic text overlay on background image
 // ✅ Added content language badge for hybrid catalog organization
 // ✅ Dynamic text overlay (title + subtitle) replaces per-product image files
@@ -24,13 +24,15 @@ interface ProductCardProps {
 
 // Background image and text colour per category.
 // Music (cat 6) uses static cover art — handled separately in the component.
-const CAT_BG: Record<number, { bg: string; textColor: string; shadowColor: string }> = {
-  1: { bg: '/assets/images/shop/bg-group4.jpg', textColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.65)' },  // 3-Day Retreats
-  2: { bg: '/assets/images/shop/bg-group3.jpg', textColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.65)' },  // 2-Day Workshops
-  3: { bg: '/assets/images/shop/bg-group2.jpg', textColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.65)' },  // 1-Day Workshops
-  4: { bg: '/assets/images/shop/bg-group1.jpg', textColor: '#0058b5', shadowColor: 'rgba(80,80,80,0.55)' }, // 3-Hour Sessions
-  5: { bg: '/assets/images/shop/bg-group1.jpg', textColor: '#0058b5', shadowColor: 'rgba(80,80,80,0.55)' }, // 1-Hour Talks
+// Text/shadow colours per category — background image now comes from the DB
+const CAT_STYLE: Record<number, { textColor: string; shadowColor: string }> = {
+  1: { textColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.65)' },
+  2: { textColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.65)' },
+  3: { textColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.65)' },
+  4: { textColor: '#0058b5', shadowColor: 'rgba(80,80,80,0.55)' },
+  5: { textColor: '#0058b5', shadowColor: 'rgba(80,80,80,0.55)' },
 };
+const DEFAULT_BG = '/assets/images/shop/bg-group1.jpg';
 
 /**
  * Get language badge configuration based on content language
@@ -68,7 +70,8 @@ export default function ProductCard({ product, showLanguageBadge = true }: Produ
   
   // Dynamic card config
   const useStaticImage = product.category_id === 6;
-  const catConfig = CAT_BG[product.category_id ?? 1] ?? CAT_BG[1];
+  const catStyle = CAT_STYLE[product.category_id ?? 1] ?? CAT_STYLE[1];
+  const catBgImage = (product as ProductWithCategory).category_background_image || DEFAULT_BG;
   const nameSub = language === 'es' ? product.name_sub_es : product.name_sub_en;
 
   // Auto-scale: shrink text to fit zone when title+subtitle overflow vertically
@@ -148,7 +151,7 @@ export default function ProductCard({ product, showLanguageBadge = true }: Produ
             <>
               <div
                 className="card-bg-image"
-                style={{ backgroundImage: `url(${catConfig.bg})` }}
+                style={{ backgroundImage: `url(${catBgImage})` }}
               />
               <div ref={textZoneRef} className="card-text-zone">
                 <div
@@ -162,8 +165,8 @@ export default function ProductCard({ product, showLanguageBadge = true }: Produ
                   <div
                     className="card-title-text"
                     style={{
-                      color: catConfig.textColor,
-                      textShadow: `1.5px 2px 4px ${catConfig.shadowColor}`,
+                      color: catStyle.textColor,
+                      textShadow: `1.5px 2px 4px ${catStyle.shadowColor}`,
                     }}
                   >
                     {name}
@@ -172,8 +175,8 @@ export default function ProductCard({ product, showLanguageBadge = true }: Produ
                     <div
                       className="card-subtitle-text"
                       style={{
-                        color: catConfig.textColor,
-                        textShadow: `1.5px 2px 4px ${catConfig.shadowColor}`,
+                        color: catStyle.textColor,
+                        textShadow: `1.5px 2px 4px ${catStyle.shadowColor}`,
                       }}
                     >
                       {nameSub}
@@ -334,6 +337,7 @@ export default function ProductCard({ product, showLanguageBadge = true }: Produ
           line-height: 1.35;
           text-align: center;
           letter-spacing: -0.01em;
+          text-wrap: balance;
         }
         
         .card-subtitle-text {
@@ -345,6 +349,7 @@ export default function ProductCard({ product, showLanguageBadge = true }: Produ
           text-align: center;
           margin-top: 10px;
           max-width: 75%;
+          text-wrap: balance;
         }
         
         /* Badge row — top left, language + category inline */

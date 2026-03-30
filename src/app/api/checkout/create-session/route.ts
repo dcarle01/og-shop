@@ -1,5 +1,5 @@
 // SHOP_src_app_api_checkout_create-session_route.ts
-// Version: 1.2.0 | Created: 2026-01-28 | Last Modified: 2026-01-29 | Author: Open Gateways Team
+// Version: 1.2.1 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
 // Description: Create Stripe Checkout session for cart
 // ✅ Added user_id support for logged-in users
 // ✅ Added MXN price rounding support - charges rounded MXN amount via Stripe
@@ -40,30 +40,6 @@ function getMxnRoundingUnit(): number {
   } catch {
     return 1; // Fallback: no rounding
   }
-}
-
-// ✅ NEW: Calculate charge amount with MXN rounding
-function calculateChargeAmount(
-  priceUsd: number,
-  currency: Currency,
-  exchangeRate: number | null,
-  roundingUnit: number
-): number {
-  // If USD or no exchange rate, return original USD price
-  if (currency === 'USD' || !exchangeRate) {
-    return priceUsd;
-  }
-  
-  // Convert to MXN
-  const mxnAmount = priceUsd * exchangeRate;
-  
-  // Apply rounding if unit > 1
-  const roundedMxn = roundingUnit > 1
-    ? Math.floor(mxnAmount / roundingUnit) * roundingUnit
-    : mxnAmount;
-  
-  // Convert back to USD for Stripe
-  return roundedMxn / exchangeRate;
 }
 
 export async function POST(request: NextRequest) {

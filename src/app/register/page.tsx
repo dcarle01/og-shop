@@ -1,5 +1,5 @@
-// SHOP_src_app_register/page.tsx
-// Version: 1.0.0 | Created: 2026-03-14 | Author: Open Gateways Team
+// SHOP_src_app_register_page.tsx
+// Version: 1.0.1 | Created: 2026-03-14 | Last Modified 2026-03-29 | Author: Open Gateways Team
 // Description: Shop-native registration page — bilingual
 // ✅ Creates account in shared users table
 // ✅ Auto-logs in after registration
@@ -8,7 +8,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';

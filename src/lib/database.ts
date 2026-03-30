@@ -1,5 +1,5 @@
 // SHOP_src_lib_database.ts
-// Version: 1.1.0 | Created: 2026-01-28 | Last Modified: 2026-01-30 | Author: Open Gateways Team
+// Version: 1.1.2 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
 // Description: Database operations for Open Gateways Shop system
 // Uses shared opengateways.db with Schedule system
 // ✅ Added content_language filtering for hybrid catalog organization
@@ -24,7 +24,6 @@ import type {
   CartItem,
   OrderStatus,
   PaymentStatus,
-  ContentLanguage,
 } from '@/types';
 
 // ============================================================================
@@ -101,7 +100,8 @@ export function getAllProducts(options?: ProductQueryOptions): ProductWithCatego
       p.*,
       c.name_en as category_name_en,
       c.name_es as category_name_es,
-      c.slug as category_slug
+      c.slug as category_slug,
+      c.background_image as category_background_image
     FROM shop_products p
     LEFT JOIN shop_categories c ON p.category_id = c.id
     WHERE 1=1
@@ -225,7 +225,8 @@ export function getProductBySlug(slug: string): ProductWithCategory | null {
       p.*,
       c.name_en as category_name_en,
       c.name_es as category_name_es,
-      c.slug as category_slug
+      c.slug as category_slug,
+      c.background_image as category_background_image
     FROM shop_products p
     LEFT JOIN shop_categories c ON p.category_id = c.id
     WHERE p.slug = ? AND p.is_active = 1
@@ -327,6 +328,7 @@ export function getRelatedProducts(
           c.name_en as category_name_en,
           c.name_es as category_name_es,
           c.slug    as category_slug,
+          c.background_image as category_background_image,
           (${scoreExpr}) AS score
         FROM shop_products p
         LEFT JOIN shop_categories c ON p.category_id = c.id

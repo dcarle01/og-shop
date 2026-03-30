@@ -1,10 +1,10 @@
 // SHOP_src_components_LanguageSwitcher.tsx
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
 // Description: Language switcher with flag icons - consistent with main site
 
 'use client';
 
-// Using <img> for SVG flags - SVGs don't benefit from Next.js Image optimization
+import Image from 'next/image';
 import { useLanguage } from '@/lib/LanguageContext';
 import type { Language } from '@/types';
 
@@ -26,12 +26,13 @@ export default function LanguageSwitcher() {
         aria-label="English"
         title="English"
       >
-        <img
+        <Image
           src="/assets/images/shared/us.svg"
           alt="English"
           width={24}
           height={18}
           className="flag"
+          unoptimized
         />
       </button>
       <button
@@ -41,12 +42,13 @@ export default function LanguageSwitcher() {
         aria-label="Español"
         title="Español"
       >
-        <img
+        <Image
           src="/assets/images/shared/mx.svg"
           alt="Español"
           width={24}
           height={18}
           className="flag"
+          unoptimized
         />
       </button>
       

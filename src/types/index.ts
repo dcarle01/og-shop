@@ -1,5 +1,5 @@
 // SHOP_src_types_index.ts
-// Version: 1.3.0 | Created: 2026-01-28 | Last Modified: 2026-03-13 | Author: Open Gateways Team
+// Version: 1.3.1 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
 // Description: TypeScript type definitions for Open Gateways Shop
 // ✅ Added auth types for login functionality
 // ✅ Added content_language for hybrid catalog organization
@@ -59,6 +59,7 @@ export interface ProductWithCategory extends Product {
   category_name_en?: string;
   category_name_es?: string;
   category_slug?: string;
+  category_background_image?: string | null;
 }
 
 // ============================================================================
@@ -73,6 +74,7 @@ export interface Category {
   description_en: string | null;
   description_es: string | null;
   icon: string | null;
+  background_image: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -398,21 +400,29 @@ export interface ShopTranslations {
   allProducts: string;
   filterByCategory: string;
   sortBy: string;
+  sortFeatured: string;
   priceHighLow: string;
   priceLowHigh: string;
   newest: string;
   noProductsFound: string;
+  searchLabel: string;
+  searchPlaceholder: string;
   addToCart: string;
   addedToCart: string;
   outOfStock: string;
   
   // Product Language Filter (✅ NEW)
   filterByLanguage: string;
+  filterByRecordedLanguage: string;
   allLanguages: string;
   englishProducts: string;
   spanishProducts: string;
   bilingualProducts: string;
   alsoAvailableIn: string;
+  recordedIn: string;
+  recordedInSingular: string;
+  otherAvailableIn: string;
+  othersAvailableIn: string;
   productInEnglish: string;
   productInSpanish: string;
   productBilingual: string;

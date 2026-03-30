@@ -1,5 +1,5 @@
 // SHOP_src_lib_LanguageContext.tsx
-// Version: 1.2.0 | Created: 2026-01-28 | Last Modified: 2026-01-30 | Author: Open Gateways Team
+// Version: 1.2.2 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
 // Description: Language context and translations for Open Gateways Shop
 // ✅ All Spanish text uses informal (tú) form
 // ✅ Added auth/login translations
@@ -66,21 +66,29 @@ const translations: Record<Language, ShopTranslations> = {
     allProducts: 'All Products',
     filterByCategory: 'Filter by Category',
     sortBy: 'Sort By',
+    sortFeatured: 'Featured',
     priceHighLow: 'Price: High to Low',
     priceLowHigh: 'Price: Low to High',
     newest: 'Newest',
     noProductsFound: 'No products found',
+    searchLabel: 'Search',
+    searchPlaceholder: 'Search by title or keyword',
     addToCart: 'Add to Cart',
     addedToCart: 'Added!',
     outOfStock: 'Out of Stock',
     
     // Product Language Filter (✅ NEW)
     filterByLanguage: 'Filter by Language',
+    filterByRecordedLanguage: 'Filter by Recorded Language',
     allLanguages: 'All Languages',
     englishProducts: 'English',
     spanishProducts: 'Spanish',
     bilingualProducts: 'Bilingual',
     alsoAvailableIn: 'other(s) available in',
+    recordedIn: 'Recorded in',
+    recordedInSingular: 'Recorded in',
+    otherAvailableIn: 'other available in',
+    othersAvailableIn: 'others available in',
     productInEnglish: 'In English',
     productInSpanish: 'In Spanish',
     productBilingual: 'Bilingual (EN/ES)',
@@ -224,21 +232,29 @@ const translations: Record<Language, ShopTranslations> = {
     allProducts: 'Todos los productos',
     filterByCategory: 'Filtrar por categoría',
     sortBy: 'Ordenar por',
+    sortFeatured: 'Destacados',
     priceHighLow: 'Precio: mayor a menor',
     priceLowHigh: 'Precio: menor a mayor',
     newest: 'Más recientes',
     noProductsFound: 'No se encontraron productos',
+    searchLabel: 'Buscar',
+    searchPlaceholder: 'Buscar por título o palabra clave',
     addToCart: 'Agregar al carrito',
     addedToCart: '¡Agregado!',
     outOfStock: 'Agotado',
     
     // Product Language Filter (✅ NEW)
     filterByLanguage: 'Filtrar por idioma',
+    filterByRecordedLanguage: 'Filtrar por idioma grabado',
     allLanguages: 'Todos los idiomas',
-    englishProducts: 'Inglés',
-    spanishProducts: 'Español',
+    englishProducts: 'inglés',
+    spanishProducts: 'español',
     bilingualProducts: 'Bilingüe',
     alsoAvailableIn: 'otro(s) disponible en',
+    recordedIn: 'Grabados en',
+    recordedInSingular: 'Grabado en',
+    otherAvailableIn: 'otro disponible en',
+    othersAvailableIn: 'otros disponibles en',
     productInEnglish: 'En inglés',
     productInSpanish: 'En español',
     productBilingual: 'Bilingüe (EN/ES)',

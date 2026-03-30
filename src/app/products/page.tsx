@@ -1,5 +1,5 @@
 // SHOP_src_app_products_page.tsx
-// Version: 1.1.0 | Created: 2026-01-28 | Last Modified: 2026-01-30 | Author: Open Gateways Team
+// Version: 1.1.3 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
 // Description: Products listing page with filtering, sorting, and language selection
 // ✅ Added content language filter for hybrid catalog organization
 
@@ -31,6 +31,7 @@ function ProductsContent() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [languageCounts, setLanguageCounts] = useState<LanguageCounts | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Filters state — restore from sessionStorage when returning from product detail
   const [selectedCategory, setSelectedCategory] = useState<string>(() => {
@@ -131,7 +132,7 @@ function ProductsContent() {
     explicitLangInSession.current = language as 'en' | 'es';
     setSelectedCategory('');
     setSelectedLanguage(language);
-  }, [language]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [language]);
 
   // Auto-apply language filter when currency changes (rules 1 & 2)
   useEffect(() => {
@@ -142,7 +143,7 @@ function ProductsContent() {
     if (explicitLangInSession.current !== null && explicitLangInSession.current !== wantLang) return;
     setSelectedCategory('');
     setSelectedLanguage(wantLang);
-  }, [currency]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currency]);
 
   // Set isFirstMount false — must run AFTER lang/currency effects so those see isFirstMount=true on first render
   useEffect(() => {
@@ -169,15 +170,41 @@ function ProductsContent() {
   }, [selectedCategory, selectedLanguage]);
   
   // Calculate "other language" count for the hint
-  const otherLanguage = language === 'es' ? 'en' : 'es';
+  const otherLanguage = selectedLanguage === 'es' ? 'en' : 'es';
   const otherLanguageCount = languageCounts ? languageCounts[otherLanguage] : 0;
-  
+  const selectedCatObj = categories.find(c => c.slug === selectedCategory);
+  const pageTitle = selectedCatObj
+    ? (language === 'es'
+        ? selectedCatObj.slug === 'music'
+            ? `Toda la ${selectedCatObj.name_es.toLowerCase()}`
+            : selectedCatObj.name_es.toLowerCase().startsWith('pláticas')
+                ? `Todas las ${selectedCatObj.name_es.toLowerCase()}`
+                : `Todos los ${selectedCatObj.name_es.toLowerCase()}`
+        : `All ${selectedCatObj.name_en}`)
+    : t.allProducts;
+  const filteredProducts = searchQuery.trim()
+    ? products.filter(p => {
+        const q = searchQuery.toLowerCase();
+        return (p.name_en || '').toLowerCase().includes(q) ||
+               (p.name_es || '').toLowerCase().includes(q) ||
+               (p.name_sub_en || '').toLowerCase().includes(q) ||
+               (p.name_sub_es || '').toLowerCase().includes(q) ||
+               (p.short_description_en || '').toLowerCase().includes(q) ||
+               (p.short_description_es || '').toLowerCase().includes(q);
+      })
+    : products;
+
   return (
     <main className="products-page">
       <div className="container">
         {/* Page Header */}
         <div className="page-header">
-          <h1>{t.allProducts}</h1>
+          <h1>{pageTitle}</h1>
+          {selectedLanguage && selectedLanguage !== 'all' && (
+            <p className="page-subtitle">
+              {t.recordedIn} {selectedLanguage === 'en' ? t.englishProducts : t.spanishProducts}
+            </p>
+          )}
         </div>
         
         {/* Filters */}
@@ -201,8 +228,8 @@ function ProductsContent() {
           </div>
           
           {/* Language Filter */}
-          <div className="filter-group">
-            <label htmlFor="language-filter">{t.filterByLanguage}</label>
+          <div className="filter-group" style={{ minWidth: '230px' }}>
+            <label htmlFor="language-filter">{t.filterByRecordedLanguage}</label>
             <select
               id="language-filter"
               value={selectedLanguage}
@@ -230,11 +257,35 @@ function ProductsContent() {
               onChange={(e) => setSortBy(e.target.value)}
               className="form-select form-input"
             >
-              <option value="featured">Featured</option>
+              <option value="featured">{t.sortFeatured}</option>
               <option value="newest">{t.newest}</option>
               <option value="price_asc">{t.priceLowHigh}</option>
               <option value="price_desc">{t.priceHighLow}</option>
             </select>
+          </div>
+
+          {/* Search Filter */}
+          <div className="filter-group filter-search">
+            <label htmlFor="search-filter">{t.searchLabel}</label>
+            <div className="search-field-wrapper">
+              <input
+                id="search-filter"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t.searchPlaceholder}
+                className="form-input search-input"
+              />
+              {searchQuery && (
+                <button
+                  className="search-clear-btn"
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </div>
         </div>
         
@@ -244,15 +295,12 @@ function ProductsContent() {
             <span className="hint-icon">💡</span>
             <span>
               {otherLanguageCount}{' '}
-              {otherLanguageCount === 1
-                ? (language === 'es' ? 'otro disponible en' : 'other available in')
-                : (language === 'es' ? 'otros disponibles en' : 'others available in')
-              }{' '}
+              {otherLanguageCount === 1 ? t.otherAvailableIn : t.othersAvailableIn}{' '}
               <button
                 className="hint-link"
                 onClick={() => { userHasSetFilters.current = true; setSelectedLanguage(otherLanguage); }}
               >
-                {otherLanguage === 'en' ? '🇺🇸 English' : '🇲🇽 Español'}
+                {otherLanguage === 'en' ? `🇺🇸 ${t.englishProducts}` : `🇲🇽 ${t.spanishProducts}`}
               </button>
             </span>
           </div>
@@ -264,7 +312,7 @@ function ProductsContent() {
             <div className="loading-spinner" />
             <p>{t.loading}</p>
           </div>
-        ) : products.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📦</div>
             <h3>{t.noProductsFound}</h3>
@@ -279,7 +327,7 @@ function ProductsContent() {
           </div>
         ) : (
           <div className="products-grid">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -300,6 +348,13 @@ function ProductsContent() {
           margin: 0;
           color: var(--color-text-primary);
         }
+        
+        .page-subtitle {
+           margin: 6px 0 0 0;
+           font-size: 1.66rem;
+           color: var(--color-text-secondary);
+           font-style: italic;
+         }
         
         .filters-bar {
           display: flex;
@@ -323,6 +378,37 @@ function ProductsContent() {
           font-size: 0.85rem;
           color: var(--color-text-muted);
           font-weight: 500;
+        }
+        
+        .filter-search {
+          flex: 1;
+          min-width: 220px;
+        }
+        
+        .search-field-wrapper {
+          position: relative;
+        }
+        
+        .search-input {
+          padding-right: 36px;
+        }
+        
+        .search-clear-btn {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: var(--color-text-muted);
+          font-size: 1.3rem;
+          line-height: 1;
+          cursor: pointer;
+          padding: 0 2px;
+        }
+        
+        .search-clear-btn:hover {
+          color: var(--color-text-primary);
         }
         
         .language-hint {
