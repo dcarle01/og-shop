@@ -1,5 +1,5 @@
 // SHOP_src_lib_auth.ts
-// Version: 1.0.0 | Created: 2026-01-29 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-29 | Last Modified: 2026-04-27 | Author: Open Gateways Team
 // Description: Authentication utilities for Open Gateways Shop
 // Simplified from Schedule system - login only, no registration
 
@@ -10,7 +10,13 @@ import jwt from 'jsonwebtoken';
 // CONFIGURATION
 // ============================================================================
 
-const JWT_SECRET = process.env.JWT_SECRET || '93100621955cef16f08e6bd7533099f455018f65f99e0436ba42f9bbc19aebf7';
+const JWT_SECRET: string = (() => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+  return secret;
+})();
 const JWT_EXPIRY = '7d';
 const JWT_ISSUER = 'opengateways';
 

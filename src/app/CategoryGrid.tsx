@@ -1,5 +1,5 @@
 // SHOP_src_app_CategoryGrid.tsx
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-04-22 | Author: Open Gateways Team
 // Description: Category grid section for homepage
 
 'use client';
@@ -17,6 +17,32 @@ const categoryIcons: Record<string, string> = {
   'music': '🎵',
   'development': '🌱',
   'default': '📦',
+};
+
+// Category background image mapping (by slug)
+const categoryBackgroundImages: Record<string, string> = {
+  '3-day-retreats': '/assets/images/shop/category4.jpg',
+  '2-day-workshops': '/assets/images/shop/category3.jpg',
+  '1-day-workshops': '/assets/images/shop/category2.jpg',
+  '3-hour-workshops': '/assets/images/shop/category1.jpg',
+  '1-hour-talks': '/assets/images/shop/category5.jpg',
+  'music': '/assets/images/shop/category6.jpg',
+};
+
+// Category title style overrides for backgrounds where white-on-dark-shadow
+// doesn't provide sufficient contrast. Slugs not listed here fall back to
+// the default (white text with dark shadow).
+// Dark-blue values mirror the convention used in ProductCard.tsx for
+// light-background product cards.
+const categoryTitleStyles: Record<string, { color: string; textShadow: string }> = {
+  '3-hour-workshops': {
+    color: '#0058b5',
+    textShadow: '1.5px 2px 4px rgba(80,80,80,0.55)',
+  },
+  '1-hour-talks': {
+    color: '#0058b5',
+    textShadow: '1.5px 2px 4px rgba(80,80,80,0.55)',
+  },
 };
 
 export default function CategoryGrid() {
@@ -63,17 +89,38 @@ export default function CategoryGrid() {
           const name = language === 'es' ? category.name_es : category.name_en;
           const description = language === 'es' ? category.description_es : category.description_en;
           const icon = category.icon || categoryIcons[category.slug] || categoryIcons.default;
+          const backgroundImage = categoryBackgroundImages[category.slug] || category.background_image || '';
           
           return (
-            <Link 
-              key={category.id} 
+            <Link
+              key={category.id}
               href={`/products?category=${category.slug}`}
               className="category-card glass-card glass-card-hover"
             >
-              <div className="category-icon">{icon}</div>
-              <h3 className="category-name">{name}</h3>
+              <div
+                className="category-top-region"
+                style={{ backgroundImage: `url('${backgroundImage}')` }}
+              >
+                <div className="category-top-half">
+                  <div className="category-icon">{icon}</div>
+                </div>
+                <div className="category-bottom-half">
+                  <h3
+                    className="category-title-overlay"
+                    style={{
+                      color: categoryTitleStyles[category.slug]?.color ?? '#ffffff',
+                      textShadow: categoryTitleStyles[category.slug]?.textShadow
+                        ?? '0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.8)',
+                    }}
+                  >
+                    {name}
+                  </h3>
+                </div>
+              </div>
               {description && (
-                <p className="category-description">{description}</p>
+                <div className="category-bottom-region">
+                  <p className="category-description">{description}</p>
+                </div>
               )}
             </Link>
           );
@@ -100,22 +147,62 @@ export default function CategoryGrid() {
         .category-card {
           display: flex;
           flex-direction: column;
-          align-items: center;
           text-align: center;
-          padding: 32px 24px;
           text-decoration: none;
           color: inherit;
+          padding: 0;
+          overflow: hidden;
+        }
+        
+        .category-top-region {
+          position: relative;
+          width: 100%;
+          height: 200px;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          display: flex;
+          flex-direction: column;
+          border-top-left-radius: var(--border-radius-lg);
+          border-top-right-radius: var(--border-radius-lg);
+        }
+        
+        .category-top-half {
+          flex: 1;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          padding-bottom: 8px;
+        }
+        
+        .category-bottom-half {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 12px;
         }
         
         .category-icon {
-          font-size: 48px;
-          margin-bottom: 16px;
+          font-size: 56px;
+          line-height: 1;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
         
-        .category-name {
-          margin: 0 0 8px 0;
-          font-size: 1.1rem;
-          color: var(--color-text-primary);
+        .category-title-overlay {
+          margin: 0;
+          font-family: 'PalatinoOG', Georgia, 'Times New Roman', serif;
+          font-size: 1.35rem;
+          font-weight: 400;
+          line-height: 1.2;
+          text-align: center;
+          text-wrap: balance;
+        }
+        
+        .category-bottom-region {
+          padding: 20px 18px;
+          background: rgba(255, 255, 255, 0.6);
+          flex: 1;
         }
         
         .category-description {
@@ -137,12 +224,24 @@ export default function CategoryGrid() {
             gap: 16px;
           }
           
-          .category-card {
-            padding: 24px 16px;
+          .category-top-region {
+            height: 160px;
           }
           
           .category-icon {
             font-size: 36px;
+          }
+          
+          .category-title-overlay {
+            font-size: 1.1rem;
+          }
+          
+          .category-bottom-region {
+            padding: 16px 14px;
+          }
+          
+          .category-description {
+            font-size: 0.85rem;
           }
         }
       `}</style>

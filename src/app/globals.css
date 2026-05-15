@@ -1,5 +1,5 @@
 /* SHOP_src_app_globals.css */
-/* Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team */
+/* Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-04-22 | Author: Open Gateways Team */
 /* Description: Global styles for Open Gateways Shop - consistent with Main Site */
 
 @import "tailwindcss";
@@ -241,28 +241,16 @@ a:hover {
 
 .language-flags {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
 .language-flags .flag {
-  width: 28px;
-  height: 20px;
+  display: block;
+  width: 24px;
+  height: 18px;
   border-radius: 3px;
-  cursor: pointer;
-  opacity: 0.5;
-  transition: opacity 0.2s ease, transform 0.2s ease;
   border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.language-flags .flag:hover {
-  opacity: 0.8;
-  transform: scale(1.1);
-}
-
-.language-flags .flag.active {
-  opacity: 1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* ============================================================================

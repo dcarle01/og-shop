@@ -1,5 +1,5 @@
 // SHOP_src_app_api_download_[token]_route.ts
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-04-27 | Author: Open Gateways Team
 // Description: Secure file download handler with token validation
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -46,18 +46,32 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
     
-    // Resolve the absolute path
-    // Files are expected to be in /home/dalecarl/public_html/assets/downloads/
-    const possiblePaths = [
-      path.join(process.cwd(), 'assets', 'downloads', filePath),
-      path.join('/home/openga9/public_html/assets/downloads', filePath),
-      filePath, // If already absolute
+    // Reject absolute paths and any path containing '..' segments. download_file_path
+    // is expected to be a relative path (e.g. "OG-W-001.zip" or "subdir/file.zip")
+    // referencing a file inside the downloads directory.
+    if (path.isAbsolute(filePath) || filePath.split(/[\\/]/).includes('..')) {
+      console.error(`[Shop Download] Rejected unsafe download_file_path: ${filePath}`);
+      return NextResponse.json({ error: 'Invalid file path' }, { status: 500 });
+    }
+
+    // Resolve under each candidate downloads directory and verify the resolved
+    // path stays inside that directory. Both candidates are checked because
+    // dev and production layouts differ.
+    const candidateRoots = [
+      path.resolve(process.cwd(), 'assets', 'downloads'),
+      path.resolve('/home/openga9/public_html/assets/downloads'),
     ];
-    
+
     let absolutePath: string | null = null;
-    for (const testPath of possiblePaths) {
-      if (fs.existsSync(testPath)) {
-        absolutePath = testPath;
+    for (const root of candidateRoots) {
+      const candidate = path.resolve(root, filePath);
+      if (candidate !== root && !candidate.startsWith(root + path.sep)) {
+        // Defensive: should be unreachable since we already rejected '..' above,
+        // but keep the check in case path.resolve produces a surprise.
+        continue;
+      }
+      if (fs.existsSync(candidate)) {
+        absolutePath = candidate;
         break;
       }
     }

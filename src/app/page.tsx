@@ -1,5 +1,5 @@
 // SHOP_src_app_page.tsx
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-04-22 | Author: Open Gateways Team
 // Description: Shop homepage with hero, featured products, and categories
 
 'use client';
@@ -24,9 +24,13 @@ export default function HomePage() {
         <section className="hero-section">
           <div className="container">
             <div className="hero-content">
-              <h1 className="hero-title">
-                {language === 'es' ? 'Grabaciones de talleres de Baratta' : 'Baratta Workshop Recordings'}
-              </h1>
+              <div className="hero-banner">
+                <img
+                  src="/assets/images/shared/shop-banner.jpg"
+                  alt={language === 'es' ? 'Grabaciones de talleres de Baratta' : 'Baratta Workshop Recordings'}
+                  className="hero-banner-image"
+                />
+              </div>
               <p className="hero-subtitle">
                 {language === 'es' ? 'Descargas digitales disponibles al instante' : 'Digital downloads available instantly'}
               </p>
@@ -42,12 +46,8 @@ export default function HomePage() {
           </div>
         </section>
         
-        {/* Featured Products */}
-        <section className="section">
-          <div className="container">
-            <FeaturedProducts />
-          </div>
-        </section>
+        {/* Featured Products - renders its own section only when products exist */}
+        <FeaturedProducts />
         
         {/* Categories */}
         <section className="section section-alt">
@@ -78,7 +78,7 @@ export default function HomePage() {
       
       <style jsx>{`
         .hero-section {
-          padding: 80px 0;
+          padding: 0 0 32px 0;
           text-align: center;
           background: linear-gradient(
             135deg, 
@@ -89,23 +89,27 @@ export default function HomePage() {
         }
         
         .hero-content {
-          max-width: 700px;
-          margin: 0 auto;
+          text-align: center;
         }
         
-        .hero-title {
-          font-size: 3rem;
-          margin-bottom: 16px;
-          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+        .hero-banner {
+          width: 100%;
+          margin-bottom: 8px;
+        }
+        
+        .hero-banner-image {
+          display: block;
+          width: 100%;
+          height: auto;
+          border-bottom-left-radius: var(--border-radius-xl);
+          border-bottom-right-radius: var(--border-radius-xl);
         }
         
         .hero-subtitle {
           font-size: 1.25rem;
           color: var(--color-text-secondary);
-          margin-bottom: 32px;
+          margin: 24px auto 28px;
+          text-align: center;
         }
         
         .hero-actions {
@@ -116,11 +120,12 @@ export default function HomePage() {
         }
         
         .section {
-          padding: 60px 0;
+          padding: 40px 0;
         }
         
         .section-alt {
           background: rgba(255, 255, 255, 0.3);
+          padding: 48px 0;
         }
         
         .cta-section {
@@ -152,19 +157,16 @@ export default function HomePage() {
         
         @media (max-width: 768px) {
           .hero-section {
-            padding: 48px 0;
-          }
-          
-          .hero-title {
-            font-size: 2rem;
+            padding: 0 0 24px 0;
           }
           
           .hero-subtitle {
             font-size: 1rem;
+            margin: 20px auto 24px;
           }
           
           .section {
-            padding: 40px 0;
+            padding: 32px 0;
           }
           
           .cta-card {

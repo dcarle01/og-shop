@@ -1,5 +1,5 @@
 // SHOP_src_types_index.ts
-// Version: 1.3.1 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.3.2 | Created: 2026-01-28 | Last Modified: 2026-04-23 | Author: Open Gateways Team
 // Description: TypeScript type definitions for Open Gateways Shop
 // ✅ Added auth types for login functionality
 // ✅ Added content_language for hybrid catalog organization
@@ -386,11 +386,14 @@ export interface ShopTranslations {
   privacyPolicy: string;
   termsOfService: string;
   contactUs: string;
+  privateSessions: string;    // Footer link text replacing "Products"
+  exploreMainSite: string;    // Small label above footer link row
   
   // Homepage
   heroTitle: string;
   heroSubtitle: string;
   featuredProducts: string;
+  featuredProduct: string;  // Singular form, used when exactly 1 featured product
   browseCategories: string;
   viewAll: string;
   instantAccess: string;

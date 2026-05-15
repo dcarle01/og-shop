@@ -1,5 +1,5 @@
 // SHOP_src_app_api_auth_register/route.ts
-// Version: 1.0.0 | Created: 2026-03-14 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-03-14 | Created: 2026-04-27 | Author: Open Gateways Team
 // Description: Shop registration API — creates account in shared users table
 // ✅ Validates input, checks for duplicate email
 // ✅ Hashes password with bcrypt

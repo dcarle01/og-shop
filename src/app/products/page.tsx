@@ -1,5 +1,5 @@
 // SHOP_src_app_products_page.tsx
-// Version: 1.1.3 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.1.4 | Created: 2026-01-28 | Last Modified: 2026-04-22 | Author: Open Gateways Team
 // Description: Products listing page with filtering, sorting, and language selection
 // ✅ Added content language filter for hybrid catalog organization
 
@@ -59,7 +59,6 @@ function ProductsContent() {
 
   // Auto-filter tracking refs (not state — no re-render needed)
   const userHasSetFilters = useRef(false);      // true once user manually changes any filter
-  const isFirstMount = useRef(true);            // guards effects from firing on initial render
   const explicitLangInSession = useRef<'en' | 'es' | null>(null); // tracks explicit lang selection
 
   // Fetch categories
@@ -126,8 +125,12 @@ function ProductsContent() {
   }, [selectedCategory, selectedLanguage, sortBy]);
 
   // Auto-apply language filter when UI language changes (rules 3 & 4)
+  // Guards against StrictMode double-invocation by tracking the previous value;
+  // only fires when language actually changes from its previous value.
+  const prevLanguageRef = useRef(language);
   useEffect(() => {
-    if (isFirstMount.current) return;
+    if (prevLanguageRef.current === language) return;
+    prevLanguageRef.current = language;
     if (userHasSetFilters.current) return;
     explicitLangInSession.current = language as 'en' | 'es';
     setSelectedCategory('');
@@ -135,8 +138,12 @@ function ProductsContent() {
   }, [language]);
 
   // Auto-apply language filter when currency changes (rules 1 & 2)
+  // Guards against StrictMode double-invocation by tracking the previous value;
+  // only fires when currency actually changes from its previous value.
+  const prevCurrencyRef = useRef(currency);
   useEffect(() => {
-    if (isFirstMount.current) return;
+    if (prevCurrencyRef.current === currency) return;
+    prevCurrencyRef.current = currency;
     if (userHasSetFilters.current) return;
     const wantLang = currency === 'MXN' ? 'es' : 'en';
     // Skip if user explicitly set the opposite language this session
@@ -145,10 +152,8 @@ function ProductsContent() {
     setSelectedLanguage(wantLang);
   }, [currency]);
 
-  // Set isFirstMount false — must run AFTER lang/currency effects so those see isFirstMount=true on first render
-  useEffect(() => {
-    isFirstMount.current = false;
-  }, []);
+  // (isFirstMount sentinel removed — auto-filter effects now guard against
+  // StrictMode double-invocation by comparing previous vs current values.)
 
   // Update URL when filters change
   useEffect(() => {
@@ -213,6 +218,7 @@ function ProductsContent() {
           <div className="filter-group">
             <label htmlFor="category-filter">{t.filterByCategory}</label>
             <select
+              key={`category-filter-${categories.length}`}
               id="category-filter"
               value={selectedCategory}
               onChange={(e) => { userHasSetFilters.current = true; setSelectedCategory(e.target.value); }}

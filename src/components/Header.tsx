@@ -1,5 +1,5 @@
 // SHOP_src_components_Header.tsx
-// Version: 1.1.0 | Created: 2026-01-28 | Last Modified: 2026-01-29 | Author: Open Gateways Team
+// Version: 1.1.1 | Created: 2026-01-28 | Last Modified: 2026-04-22 | Author: Open Gateways Team
 // Description: Shop header component with navigation, cart indicator, and auth
 // ✅ Added Sign In / My Account dropdown
 
@@ -309,6 +309,25 @@ export default function Header() {
           
           .sign-in-link {
             padding: 8px;
+          }
+        }
+        
+        @media (max-width: 560px) {
+          :global(.header-logo img) {
+            content: url('/assets/images/shared/favicon.ico');
+            height: 36px !important;
+            width: 36px !important;
+            aspect-ratio: 1 / 1 !important;
+            object-fit: contain !important;
+          }
+          
+          :global(.header-actions) {
+            margin-left: 12px;
+          }
+          
+          :global(.header-content) {
+            padding: 12px 12px 12px 12px;
+            gap: 0;
           }
         }
       `}</style>

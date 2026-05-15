@@ -1,0 +1,113 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/openga9/public_html/shop.opengateways.com"
+PassengerBaseURI "/"
+PassengerNodejs "/home/openga9/nodevenv/public_html/shop.opengateways.com/22/bin/node"
+PassengerAppType node
+PassengerStartupFile app.js
+PassengerAppLogFile "/home/openga9/logs/shop_passenger.log"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+
+# ==============================================
+# BOT BLOCKING
+# The shop is the highest-risk target for aggressive crawlers due to its
+# product catalog volume. Block known offenders at the server level.
+# ==============================================
+RewriteEngine On
+RewriteCond %{HTTP_USER_AGENT} (meta-externalagent|PetalBot|DotBot|AhrefsBot|FeedValidator|SemrushBot|MJ12bot|BLEXBot|DataForSeoBot|serpstatbot|SEOkicks) [NC]
+RewriteRule .* - [F,L]
+
+# ==============================================
+# FORCE HTTPS
+# ==============================================
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ==============================================
+# SECURITY HEADERS
+# ==============================================
+<IfModule mod_headers.c>
+  # Remove server signature
+  Header unset Server
+  Header unset X-Powered-By
+
+  # Security headers
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # HSTS - Force HTTPS for 1 year
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# ==============================================
+# CACHING
+# ==============================================
+<IfModule mod_headers.c>
+  # Cache static assets aggressively (1 year)
+  <FilesMatch "\.(jpg|jpeg|png|gif|webp|ico|svg)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+
+  # Prevent caching for Next.js page navigations (not .html files, no extension)
+  SetEnvIf Request_URI "^/(?!api/|_next/|assets/).*$" NO_CACHE_PAGE=1
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=NO_CACHE_PAGE
+  Header set Pragma "no-cache" env=NO_CACHE_PAGE
+
+  # Don't cache HTML, JSON, or API responses
+  <FilesMatch "\.(html|htm|json)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+
+  # Prevent caching for API routes
+  SetEnvIf Request_URI "^/api/" NO_CACHE=1
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=NO_CACHE
+  Header set Pragma "no-cache" env=NO_CACHE
+  Header set Expires "0" env=NO_CACHE
+  Header set X-Accel-Expires "0" env=NO_CACHE
+</IfModule>
+
+# ==============================================
+# COMPRESSION
+# ==============================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/plain
+</IfModule>
+
+# ==============================================
+# DIRECTORY & FILE PROTECTION
+# ==============================================
+Options -Indexes
+
+# Block access to all dotfiles (.env, .git, .htpasswd, etc.)
+<FilesMatch "^\.">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Block access to sensitive file extensions
+<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Protect the database symlink directory
+<IfModule mod_rewrite.c>
+  RewriteRule ^assets/database/ - [F,L]
+</IfModule>

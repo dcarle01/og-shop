@@ -97,6 +97,30 @@ export async function POST(request: NextRequest) {
       }, { status: 401 });
     }
 
+    // Check customer_status (inactive/blocked clients may not log in)
+    const customerExt = db.prepare(
+      'SELECT customer_status FROM customer_extended WHERE user_id = ?'
+    ).get(user.id) as { customer_status: string } | undefined;
+    const customerStatus = customerExt?.customer_status ?? 'active';
+
+    if (customerStatus === 'inactive') {
+      console.log('[Shop Login] Denied — inactive account:', user.email);
+      return NextResponse.json({
+        success: false,
+        error: 'Your account has been deactivated. Please contact support to reactivate.',
+        errorCode: 'ACCOUNT_INACTIVE',
+      }, { status: 403 });
+    }
+
+    if (customerStatus === 'blocked') {
+      console.log('[Shop Login] Denied — blocked account:', user.email);
+      return NextResponse.json({
+        success: false,
+        error: 'Your account has been suspended. Please contact support.',
+        errorCode: 'ACCOUNT_BLOCKED',
+      }, { status: 403 });
+    }
+
     console.log('[Shop Login] Success for:', user.email);
 
     // Create user object without password hash

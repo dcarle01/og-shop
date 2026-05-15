@@ -1,5 +1,5 @@
 // SHOP_src_lib_LanguageContext.tsx
-// Version: 1.2.2 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.2.3 | Created: 2026-01-28 | Last Modified: 2026-04-23 | Author: Open Gateways Team
 // Description: Language context and translations for Open Gateways Shop
 // ✅ All Spanish text uses informal (tú) form
 // ✅ Added auth/login translations
@@ -44,19 +44,22 @@ const translations: Record<Language, ShopTranslations> = {
     
     // Header/Footer
     welcomeTo: 'Welcome to',
-    tagline: 'Channeled Wisdom for Your Journey',
+    tagline: 'Your Portal to the Love and Wisdom of Baratta',
     questionsCall: 'Questions? Call',
     questionsEmail: 'Questions? Email us',
     followUs: 'Follow Us',
     allRightsReserved: 'All Rights Reserved',
     privacyPolicy: 'Privacy Policy',
     termsOfService: 'Terms of Service',
+    privateSessions: 'Private Sessions',
+    exploreMainSite: 'Explore opengateways.com',
     contactUs: 'Contact Us',
     
     // Homepage
     heroTitle: 'Baratta Workshop Recordings',
     heroSubtitle: 'Digital downloads available instantly',
     featuredProducts: 'Featured Products',
+    featuredProduct: 'Featured Product',
     browseCategories: 'Browse Categories',
     viewAll: 'View All',
     instantAccess: 'Instant Access to Baratta\'s Loving Wisdom',
@@ -210,19 +213,22 @@ const translations: Record<Language, ShopTranslations> = {
     
     // Header/Footer
     welcomeTo: 'Bienvenido a',
-    tagline: 'Sabiduría canalizada para tu camino',
+    tagline: 'Tu portal al amor y sabiduría de Baratta',
     questionsCall: '¿Preguntas? Llámanos',
     questionsEmail: '¿Preguntas? Escríbenos',
     followUs: 'Síguenos',
     allRightsReserved: 'Todos los derechos reservados',
     privacyPolicy: 'Política de privacidad',
     termsOfService: 'Términos de servicio',
+    privateSessions: 'Sesiones privadas',
+    exploreMainSite: 'Explora opengateways.com',
     contactUs: 'Contáctanos',
     
     // Homepage
     heroTitle: 'Grabaciones de talleres de Baratta',
     heroSubtitle: 'Descargas digitales disponibles al instante',
     featuredProducts: 'Productos destacados',
+    featuredProduct: 'Producto destacado',
     browseCategories: 'Explorar categorías',
     viewAll: 'Ver Todo',
     instantAccess: 'Acceso instantáneo a la sabiduría amorosa de Baratta',
