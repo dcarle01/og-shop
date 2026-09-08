@@ -111,3 +111,13 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteRule ^assets/database/ - [F,L]
 </IfModule>
+
+# Block source, dependencies and deployment archives.
+# The document root is the Passenger application root, so anything the Node
+# app does not claim is otherwise served as a static file.
+RewriteRule ^(src|node_modules)/ - [F,L]
+RewriteRule ^\.(next|git)/ - [F,L]
+RewriteRule ^(app|next\.config|postcss\.config|tailwind\.config|eslint\.config)\.(js|mjs|cjs)$ - [F,L]
+RewriteRule ^(package|package-lock|tsconfig)\.json$ - [F,L]
+RewriteRule ^(tsconfig\.tsbuildinfo|next-env\.d\.ts)$ - [F,L]
+RewriteRule \.(tar|gz|tgz|zip|local)$ - [F,L]
