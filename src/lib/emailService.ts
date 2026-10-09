@@ -1,5 +1,5 @@
 // SHOP_src_lib_emailService.ts
-// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-05-21 | Author: Open Gateways Team
+// Version: 1.0.2 | Created: 2026-01-28 | Last Modified: 2026-10-09 | Author: Open Gateways Team
 // Description: Email service for order confirmations and download links
 
 import { Resend } from 'resend';
@@ -10,7 +10,20 @@ import { logEmail } from './database';
 // RESEND CLIENT
 // ============================================================================
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Created when an email is actually sent, not when this module loads. During
+// `next build` every API route is loaded to collect page data, and the build
+// machine has no RESEND_API_KEY (it lives on the server), so creating the
+// client at load time stopped the build. Same approach as og-schedule.
+let resendClient: Resend | null = null;
+function getResend(): Resend {
+  if (!resendClient) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not set');
+    }
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resendClient;
+}
 
 // ============================================================================
 // CONSTANTS
@@ -229,7 +242,7 @@ export async function sendOrderConfirmationEmail(
     const subject = getOrderConfirmationSubject(order.order_reference, language);
     const html = generateOrderConfirmationHtml(data);
     
-    const result = await resend.emails.send({
+    const result = await getResend().emails.send({
       from: FROM_EMAIL,
       to: order.customer_email,
       subject,
@@ -297,7 +310,7 @@ export async function sendDownloadReminderEmail(
       </div>
     `;
     
-    const result = await resend.emails.send({
+    const result = await getResend().emails.send({
       from: FROM_EMAIL,
       to: email,
       subject: t.subject,
