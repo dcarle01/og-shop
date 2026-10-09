@@ -1,10 +1,13 @@
 // SHOP_src_app_assets_[...path]_route.ts
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-10-09 | Author: Open Gateways Team
 // Description: Serve shared assets through Next.js (bypasses Passenger issue)
 
 import { NextRequest, NextResponse } from 'next/server';
-import { readFile, stat } from 'fs/promises';
+import { readFile, realpath } from 'fs/promises';
 import path from 'path';
+
+// Only these top-level folders under assets/ are public (allow-list, 2026-10-09).
+const ALLOWED_TOP_LEVEL = new Set(['images', 'fonts', 'manifests']);
 
 // Simple MIME type lookup
 function getMimeType(filePath: string): string {
@@ -38,25 +41,41 @@ export async function GET(
 ) {
   try {
     const { path: pathSegments } = await params;
-    const filePath = path.join(process.cwd(), 'assets', ...pathSegments);
-    
-    // Security: prevent directory traversal
-    const normalizedPath = path.normalize(filePath);
-    const assetsDir = path.join(process.cwd(), 'assets');
-    if (!normalizedPath.startsWith(assetsDir)) {
-      return NextResponse.json({ error: 'Invalid path' }, { status: 403 });
+
+    // Serve only the public asset folders. assets/ is shared with other content
+    // (database/, data/, api/, downloads/, lib/ ...). Anything outside the allowed
+    // folders, and any dot-file or dot-folder segment, gets a 404. Same rule as
+    // the schedule and admin /api/assets routes (2026-10-08).
+    if (
+      pathSegments.length < 2 ||
+      !ALLOWED_TOP_LEVEL.has(pathSegments[0]) ||
+      pathSegments.some(seg => seg.startsWith('.') || seg.includes('/') || seg.includes('\\'))
+    ) {
+      return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
     }
-    
-    // Check if file exists
+
+    // Resolve the path strictly inside assets/ (the old startsWith check had no
+    // trailing separator), then require the real file - symlinks resolved - to
+    // sit inside the real allowed folder.
+    const assetsDir = path.resolve(process.cwd(), 'assets');
+    const filePath = path.resolve(assetsDir, ...pathSegments);
+    if (!filePath.startsWith(assetsDir + path.sep)) {
+      return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
+    }
+    let realFile: string;
     try {
-      await stat(filePath);
+      const realAllowedDir = path.join(await realpath(assetsDir), pathSegments[0]);
+      realFile = await realpath(filePath);
+      if (!realFile.startsWith(realAllowedDir + path.sep)) {
+        return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
+      }
     } catch {
       return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
     }
 
     // Read and serve the file
-    const fileBuffer = await readFile(filePath);
-    const mimeType = getMimeType(filePath);
+    const fileBuffer = await readFile(realFile);
+    const mimeType = getMimeType(realFile);
 
     return new NextResponse(new Uint8Array(fileBuffer), {
       status: 200,
