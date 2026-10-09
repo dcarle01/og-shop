@@ -1,5 +1,5 @@
 // SHOP_src_app_api_checkout_verify-payment_route.ts
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-05-21 | Author: Open Gateways Team
 // Description: Verify payment and return order details with download links
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -87,8 +87,9 @@ export async function POST(request: NextRequest) {
     // Get download tokens
     const downloadTokens = getOrderDownloadTokens(order.id);
     
-    // Get fresh order data
-    const finalOrder = getOrderByStripeSession(session_id);
+    // Get fresh order data, including line items (the confirmation page
+    // expects order.items to be an array)
+    const finalOrder = getOrderWithItems(order.id);
     
     return NextResponse.json({
       success: true,

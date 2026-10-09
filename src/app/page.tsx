@@ -1,5 +1,5 @@
 // SHOP_src_app_page.tsx
-// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-04-22 | Author: Open Gateways Team
+// Version: 1.0.2 | Created: 2026-01-28 | Last Modified: 2026-05-21 | Author: Open Gateways Team
 // Description: Shop homepage with hero, featured products, and categories
 
 'use client';
@@ -61,13 +61,18 @@ export default function HomePage() {
           <div className="container">
             <div className="cta-card glass-card">
               <div className="cta-icon">📥</div>
-              <h2>Instant Access to Baratta&apos;s Loving Wisdom</h2>
+              <h2>
+                {language === 'es'
+                  ? 'Acceso instantáneo a la sabiduría amorosa de Baratta'
+                  : 'Instant Access to Baratta\u2019s Loving Wisdom'}
+              </h2>
               <p>
-                All digital products are available for immediate download after purchase. 
-                Start your journey today with these transformative workshops from Baratta.
+                {language === 'es'
+                  ? 'Todos los productos digitales están disponibles para descarga inmediata después de la compra. Comienza tu viaje hoy con estos talleres transformadores de Baratta.'
+                  : 'All digital products are available for immediate download after purchase. Start your journey today with these transformative workshops from Baratta.'}
               </p>
               <Link href="/products" className="btn btn-primary">
-                Explore All Products
+                {language === 'es' ? 'Explora todos los productos' : 'Explore All Products'}
               </Link>
             </div>
           </div>

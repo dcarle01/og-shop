@@ -1,5 +1,5 @@
 // SHOP_src_lib_emailService.ts
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-05-21 | Author: Open Gateways Team
 // Description: Email service for order confirmations and download links
 
 import { Resend } from 'resend';
@@ -142,16 +142,15 @@ function generateOrderConfirmationHtml(data: OrderConfirmationData): string {
     <div style="text-align: center; padding: 30px 0;">
       <img src="https://opengateways.com/assets/images/shared/OG_logo_2025.webp" alt="Open Gateways" 
            style="width: 180px; height: 38px;">
-      <h1 style="margin: 16px 0 0 0; color: #0184f6; font-size: 24px; font-weight: 400;">Open Gateways</h1>
     </div>
     
     <!-- Main Content Card -->
     <div style="background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); overflow: hidden;">
       <!-- Greeting -->
-      <div style="padding: 30px; text-align: center; background: linear-gradient(135deg, rgba(1, 132, 246, 0.1) 0%, rgba(1, 100, 201, 0.05) 100%);">
+      <div style="padding: 30px; text-align: center; background-image: url('https://opengateways.com/assets/images/shared/shop-banner-backgroundV3.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <h2 style="margin: 0 0 8px 0; color: #2d3748; font-size: 22px;">${text.greeting}</h2>
-        <p style="margin: 0; color: #0184f6; font-size: 18px; font-weight: 500;">${text.thankYou}</p>
-        <p style="margin: 8px 0 0 0; color: #718096;">${text.orderConfirmed}</p>
+        <p style="margin: 0; color: #0184f6; font-size: 18px; font-weight: 700;">${text.thankYou}</p>
+        <p style="margin: 8px 0 0 0; color: #2d3748; font-weight: 700;">${text.orderConfirmed}</p>
       </div>
       
       <!-- Order Details -->

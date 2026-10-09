@@ -1,5 +1,5 @@
 // SHOP_src_lib_database.ts
-// Version: 1.1.2 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.1.3 | Created: 2026-01-28 | Last Modified: 2026-05-21 | Author: Open Gateways Team
 // Description: Database operations for Open Gateways Shop system
 // Uses shared opengateways.db with Schedule system
 // ✅ Added content_language filtering for hybrid catalog organization
@@ -575,7 +575,7 @@ export function updateOrderStatus(
   }
   
   if (orderStatus === 'completed') {
-    query += ', completed_at = datetime("now")';
+    query += ", completed_at = datetime('now')";
   }
   
   query += ' WHERE id = ?';

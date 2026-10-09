@@ -1,5 +1,5 @@
 // SHOP_src_app_products_[slug]_ProductDetailClient.tsx
-// Version: 1.2.2 | Created: 2026-02-01 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.2.3 | Created: 2026-02-01 | Last Modified: 2026-05-21 | Author: Open Gateways Team
 // Description: Product detail client component with add to cart functionality
 // ✅ Dynamic text overlay image zone (650/550 aspect ratio)
 // ✅ Music category (id=6) uses contained static cover art
@@ -76,6 +76,24 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
   
   const handleAddToCart = () => {
     if (inCart) return;
+    
+    // Confirm when the product's recorded language differs from the page language.
+    // Only 'en' / 'es' products prompt; 'both' and null (language-neutral) never do.
+    const pl = product.content_language;
+    if ((pl === 'en' || pl === 'es') && pl !== language) {
+      const productLangName =
+        language === 'es'
+          ? (pl === 'en' ? 'inglés' : 'español')
+          : (pl === 'en' ? 'English' : 'Spanish');
+      const pageLangName = language === 'es' ? 'español' : 'English';
+      const confirmMessage =
+        language === 'es'
+          ? `El producto que has seleccionado está grabado en ${productLangName}, mientras que estás viendo esta página en ${pageLangName}. ¿Seguro que deseas comprar este producto en ${productLangName}?`
+          : `The product you have selected is recorded in ${productLangName}, while you are viewing this page in ${pageLangName}. Are you sure you want to buy this ${productLangName}-language product?`;
+      if (!window.confirm(confirmMessage)) {
+        return; // No / No — abandon add to cart
+      }
+    }
     
     setIsAdding(true);
     addToCart(product);

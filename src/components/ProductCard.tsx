@@ -1,5 +1,5 @@
 // SHOP_src_components_ProductCard.tsx
-// Version: 2.1.2 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 2.1.3 | Created: 2026-01-28 | Last Modified: 2026-05-21 | Author: Open Gateways Team
 // Description: Product card component — dynamic text overlay on background image
 // ✅ Added content language badge for hybrid catalog organization
 // ✅ Dynamic text overlay (title + subtitle) replaces per-product image files
@@ -105,6 +105,24 @@ export default function ProductCard({ product, showLanguageBadge = true }: Produ
     e.stopPropagation();
     
     if (inCart) return;
+    
+    // Confirm when the product's recorded language differs from the page language.
+    // Only 'en' / 'es' products prompt; 'both' and null (language-neutral) never do.
+    const pl = product.content_language;
+    if ((pl === 'en' || pl === 'es') && pl !== language) {
+      const productLangName =
+        language === 'es'
+          ? (pl === 'en' ? 'inglés' : 'español')
+          : (pl === 'en' ? 'English' : 'Spanish');
+      const pageLangName = language === 'es' ? 'español' : 'English';
+      const confirmMessage =
+        language === 'es'
+          ? `El producto que has seleccionado está grabado en ${productLangName}, mientras que estás viendo esta página en ${pageLangName}. ¿Seguro que deseas comprar este producto en ${productLangName}?`
+          : `The product you have selected is recorded in ${productLangName}, while you are viewing this page in ${pageLangName}. Are you sure you want to buy this ${productLangName}-language product?`;
+      if (!window.confirm(confirmMessage)) {
+        return; // No / No — abandon add to cart
+      }
+    }
     
     setIsAdding(true);
     addToCart(product);
