@@ -36,3 +36,5 @@ Thumbs.db
 npm-debug.log*
 tsconfig.tsbuildinfo
 .deploy-manifest.txt
+# Photoshop design sources — archived off-git, never served or needed by dev
+*.psd
