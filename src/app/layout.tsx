@@ -1,5 +1,5 @@
 // SHOP_src_app_layout.tsx
-// Version: 1.1.0 | Created: 2026-01-28 | Last Modified: 2026-01-29 | Author: Open Gateways Team
+// Version: 1.1.1 | Created: 2026-01-28 | Last Modified: 2026-11-13 | Author: Open Gateways Team
 // Description: Root layout for Open Gateways Shop
 // ✅ Added AuthProvider for user authentication
 
@@ -64,6 +64,16 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/shared/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/shared/favicon-16x16.png" />
         <link rel="apple-touch-icon" href="/assets/images/shared/apple-touch-icon.png" />
+        <link rel="manifest" href="/assets/manifests/shop/site.webmanifest" />
+
+        {/* PWA / iOS home screen support. Written here rather than in `metadata`:
+            Next 15 streams metadata into <body> for regular browsers, and Chrome
+            only reads a manifest link that sits inside <head>. */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="OG Shop" />
+        <meta name="theme-color" content="#2563eb" />
       </head>
       <body>
         <LanguageProvider>
