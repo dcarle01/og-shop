@@ -1,5 +1,5 @@
 // SHOP_src_app_api_checkout_create-session_route.ts
-// Version: 1.2.1 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.3.0 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Create Stripe Checkout session for cart
 // ✅ Added user_id support for logged-in users
 // ✅ Added MXN price rounding support - charges rounded MXN amount via Stripe
@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCheckoutSession, formatLineItem } from '@/lib/stripe';
 import { createOrder, getProductById, openDatabase } from '@/lib/database';
+import { getUsdMxnRate } from '@/lib/exchangeRate';
 import type { CartItem, Language, Currency } from '@/types';
 
 interface CreateSessionBody {
@@ -78,6 +79,20 @@ export async function POST(request: NextRequest) {
     // Fall back to client-provided value or 1 (no rounding)
     const roundingUnit = getMxnRoundingUnit() || clientRoundingUnit || 1;
     
+    // ✅ The exchange rate comes from the server (Banxico FIX), never from the
+    // browser: a rate sent by the browser could be edited to change what Stripe charges.
+    const currentRate = currency === 'MXN' ? await getUsdMxnRate() : null;
+    if (currency === 'MXN' && !currentRate) {
+      return NextResponse.json(
+        { success: false, error: 'MXN pricing is temporarily unavailable. Please pay in USD.' },
+        { status: 503 }
+      );
+    }
+    const serverRate: number | null = currentRate ? currentRate.rate : null;
+    if (serverRate && exchange_rate && Math.abs(exchange_rate - serverRate) / serverRate > 0.005) {
+      console.log(`[Shop Checkout] Browser rate ${exchange_rate} differs from server rate ${serverRate}; charging the server rate`);
+    }
+    
     // Verify products and calculate totals
     let calculatedTotalUsd = 0;
     let calculatedTotalDisplay = 0;
@@ -103,8 +118,8 @@ export async function POST(request: NextRequest) {
       calculatedTotalUsd += product.price_usd * item.quantity;
       
       // ✅ Calculate display total (rounded if MXN)
-      if (currency === 'MXN' && exchange_rate) {
-        const mxnAmount = product.price_usd * exchange_rate * item.quantity;
+      if (currency === 'MXN' && serverRate) {
+        const mxnAmount = product.price_usd * serverRate * item.quantity;
         const roundedMxn = roundingUnit > 1
           ? Math.floor(mxnAmount / roundingUnit) * roundingUnit
           : mxnAmount;
@@ -120,7 +135,7 @@ export async function POST(request: NextRequest) {
       verifiedItems,
       calculatedTotalUsd,  // Original USD total
       currency,
-      exchange_rate || null,
+      serverRate,
       language,
       undefined,
       user_id,
@@ -146,9 +161,9 @@ export async function POST(request: NextRequest) {
       let unitAmountInSmallestUnit: number;
       let chargeCurrency: string;
       
-      if (currency === 'MXN' && exchange_rate) {
+      if (currency === 'MXN' && serverRate) {
         // Charge in MXN - calculate unit price in centavos
-        const mxnUnitPrice = item.price_usd * exchange_rate;
+        const mxnUnitPrice = item.price_usd * serverRate;
         const roundedMxnUnit = roundingUnit > 1
           ? Math.floor(mxnUnitPrice / roundingUnit) * roundingUnit
           : mxnUnitPrice;
@@ -177,7 +192,7 @@ export async function POST(request: NextRequest) {
         order_reference: order.order_reference,
         language,
         currency,
-        exchange_rate: exchange_rate?.toString() || '',
+        exchange_rate: serverRate?.toString() || '',
         mxn_rounding_unit: roundingUnit.toString(),
         user_id: user_id?.toString() || '',
       },

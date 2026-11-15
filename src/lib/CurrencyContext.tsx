@@ -1,5 +1,5 @@
 // SHOP_src_lib_CurrencyContext.tsx
-// Version: 1.1.0 | Created: 2026-01-28 | Last Modified: 2026-01-29 | Author: Open Gateways Team
+// Version: 1.2.0 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Currency context for USD/MXN support with exchange rate conversion
 // ✅ Added MXN price rounding support for cleaner peso prices
 
@@ -35,19 +35,19 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 // API FETCHING
 // ============================================================================
 
-async function fetchExchangeRate(): Promise<number> {
+async function fetchExchangeRate(): Promise<number | null> {
   try {
     const response = await fetch('/api/exchange-rate');
     if (response.ok) {
       const data = await response.json();
-      if (data.rate) {
+      if (data.success && data.rate) {
         return data.rate;
       }
     }
   } catch (error) {
     console.warn('Failed to fetch exchange rate from API:', error);
   }
-  return 17.50; // Default MXN/USD rate
+  return null; // No rate available: the shop shows and charges USD only
 }
 
 async function fetchShopConfig(): Promise<{ mxn_price_rounding_unit: number }> {
@@ -105,11 +105,13 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
     ])
       .then(([rate, config]) => {
         setExchangeRate(rate);
+        if (rate === null) setCurrencyState('USD');  // no rate available: USD only
         setMxnRoundingUnit(config.mxn_price_rounding_unit);
         setIsLoading(false);
       })
       .catch(() => {
-        setExchangeRate(17.50);
+        setExchangeRate(null);
+        setCurrencyState('USD');
         setMxnRoundingUnit(1);
         setIsLoading(false);
       });
@@ -230,7 +232,7 @@ interface CurrencySelectorProps {
 }
 
 export function CurrencySelector({ className = '' }: CurrencySelectorProps) {
-  const { currency, setCurrency } = useCurrency();
+  const { currency, setCurrency, exchangeRate, isLoading } = useCurrency();
   
   return (
     <div className={`currency-selector ${className}`}>
@@ -241,7 +243,8 @@ export function CurrencySelector({ className = '' }: CurrencySelectorProps) {
         aria-label="Select currency"
       >
         <option value="USD">$ USD</option>
-        <option value="MXN">$ MXN</option>
+        {/* MXN is offered only when a USD->MXN rate is available */}
+        {(isLoading || exchangeRate !== null) && <option value="MXN">$ MXN</option>}
       </select>
       
       <style jsx>{`
