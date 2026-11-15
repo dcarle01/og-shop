@@ -1,5 +1,5 @@
 // SHOP_src_app_checkout_page.tsx
-// Version: 1.1.1 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.1.2 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Checkout page with guest checkout and optional login
 // ✅ Added inline login section for registered users
 
@@ -189,7 +189,7 @@ export default function CheckoutPage() {
       const data = await response.json();
       
       if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Checkout failed');
+        throw new Error(data.error || t.errorGeneric);
       }
       
       // Redirect to Stripe Checkout

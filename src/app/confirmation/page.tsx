@@ -1,5 +1,5 @@
 // SHOP_src_app_confirmation_page.tsx
-// Version: 1.0.0 | Created: 2026-01-28 | Author: Open Gateways Team
+// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Order confirmation page with download links
 
 'use client';
@@ -47,7 +47,7 @@ function ConfirmationContent() {
         const result = await response.json();
         
         if (!response.ok || !result.success) {
-          throw new Error(result.error || 'Payment verification failed');
+          throw new Error(result.error || '');
         }
         
         setData({
@@ -59,7 +59,7 @@ function ConfirmationContent() {
         clearCart();
       } catch (err) {
         console.error('Error verifying payment:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        setError(err instanceof Error && err.message ? err.message : null);
       } finally {
         setIsLoading(false);
       }

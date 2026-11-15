@@ -1,5 +1,5 @@
 // SHOP_src_app_api_checkout_verify-payment_route.ts
-// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-05-21 | Author: Open Gateways Team
+// Version: 1.0.2 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Verify payment and return order details with download links
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -101,7 +101,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         success: false, 
-        error: error instanceof Error ? error.message : 'Payment verification failed' 
+        // The real error is logged above; never send it to the browser.
+        error_code: 'verification_failed',
       },
       { status: 500 }
     );

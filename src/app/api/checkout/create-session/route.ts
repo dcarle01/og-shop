@@ -1,5 +1,5 @@
 // SHOP_src_app_api_checkout_create-session_route.ts
-// Version: 1.3.0 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
+// Version: 1.3.1 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Create Stripe Checkout session for cart
 // ✅ Added user_id support for logged-in users
 // ✅ Added MXN price rounding support - charges rounded MXN amount via Stripe
@@ -218,7 +218,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create checkout session'
+        // The real error is logged above; never send it to the browser (it can
+        // include provider details). The page shows its own localized message.
+        error_code: 'checkout_failed',
       },
       { status: 500 }
     );
