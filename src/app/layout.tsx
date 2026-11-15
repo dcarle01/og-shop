@@ -1,5 +1,5 @@
 // SHOP_src_app_layout.tsx
-// Version: 1.1.1 | Created: 2026-01-28 | Last Modified: 2026-11-13 | Author: Open Gateways Team
+// Version: 1.1.2 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Root layout for Open Gateways Shop
 // ✅ Added AuthProvider for user authentication
 
@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: '/assets/images/shared/favicon.ico',
-    apple: '/assets/images/shared/apple-touch-icon.png',
   },
 };
 
