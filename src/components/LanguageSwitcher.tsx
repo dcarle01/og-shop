@@ -1,5 +1,5 @@
 // SHOP_src_components_LanguageSwitcher.tsx
-// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-03-29 | Author: Open Gateways Team
+// Version: 1.0.2 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
 // Description: Language switcher with flag icons - consistent with main site
 
 'use client';
@@ -53,6 +53,15 @@ export default function LanguageSwitcher() {
       </button>
       
       <style jsx>{`
+        /* Never let the header squeeze the flags: with the global img max-width,
+           they could shrink to nothing, leaving only the active ring. */
+        .language-flags {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          flex-shrink: 0;
+        }
+        
         .flag-btn {
           background: none;
           border: none;
