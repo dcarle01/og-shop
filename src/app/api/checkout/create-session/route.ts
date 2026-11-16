@@ -1,12 +1,12 @@
 // SHOP_src_app_api_checkout_create-session_route.ts
-// Version: 1.3.1 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
+// Version: 1.3.2 | Created: 2026-01-28 | Last Modified: 2026-11-16 | Author: Open Gateways Team
 // Description: Create Stripe Checkout session for cart
 // ✅ Added user_id support for logged-in users
 // ✅ Added MXN price rounding support - charges rounded MXN amount via Stripe
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createCheckoutSession, formatLineItem } from '@/lib/stripe';
-import { createOrder, getProductById, openDatabase } from '@/lib/database';
+import { createOrder, getProductById, openDatabase, updateOrderStatus } from '@/lib/database';
 import { getUsdMxnRate } from '@/lib/exchangeRate';
 import type { CartItem, Language, Currency } from '@/types';
 
@@ -44,6 +44,8 @@ function getMxnRoundingUnit(): number {
 }
 
 export async function POST(request: NextRequest) {
+  // Set once the order exists, so the error handler can close it (see the catch).
+  let createdOrderId: number | null = null;
   try {
     const body: CreateSessionBody = await request.json();
     
@@ -142,6 +144,8 @@ export async function POST(request: NextRequest) {
       customer_country
     );
     
+    createdOrderId = order.id;
+    
     // ✅ Update order with display total if MXN
     if (currency === 'MXN' && calculatedTotalDisplay > 0) {
       const db = openDatabase();
@@ -215,6 +219,16 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('[Shop Checkout] Error creating session:', error);
+    // If the order was already created, close it: with no Stripe session there is
+    // nothing for the expiry webhook to close, so it would stay "pending" forever.
+    if (createdOrderId !== null) {
+      try {
+        updateOrderStatus(createdOrderId, 'cancelled', 'failed');
+        console.log(`[Shop Checkout] Marked order ${createdOrderId} cancelled after the failure`);
+      } catch (markError) {
+        console.error('[Shop Checkout] Could not mark the order cancelled:', markError);
+      }
+    }
     return NextResponse.json(
       {
         success: false,
