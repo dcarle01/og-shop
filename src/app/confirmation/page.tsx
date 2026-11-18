@@ -1,5 +1,5 @@
 // SHOP_src_app_confirmation_page.tsx
-// Version: 1.0.1 | Created: 2026-01-28 | Last Modified: 2026-11-15 | Author: Open Gateways Team
+// Version: 1.0.2 | Created: 2026-01-28 | Last Modified: 2026-11-18 | Author: Open Gateways Team
 // Description: Order confirmation page with download links
 
 'use client';
@@ -41,7 +41,7 @@ function ConfirmationContent() {
         const response = await fetch('/api/checkout/verify-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: sessionId }),
+          body: JSON.stringify({ session_id: sessionId, language }),
         });
         
         const result = await response.json();

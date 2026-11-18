@@ -1,5 +1,5 @@
 // SHOP_src_app_api_checkout_create-session_route.ts
-// Version: 1.3.2 | Created: 2026-01-28 | Last Modified: 2026-11-16 | Author: Open Gateways Team
+// Version: 1.3.3 | Created: 2026-01-28 | Last Modified: 2026-11-18 | Author: Open Gateways Team
 // Description: Create Stripe Checkout session for cart
 // ✅ Added user_id support for logged-in users
 // ✅ Added MXN price rounding support - charges rounded MXN amount via Stripe
@@ -61,18 +61,20 @@ export async function POST(request: NextRequest) {
       mxn_rounding_unit: clientRoundingUnit,
       user_id,
     } = body;
+    // Customer-facing messages below follow the shopper's language.
+    const es = language === 'es';
     
     // Validate required fields
     if (!cart?.items?.length) {
       return NextResponse.json(
-        { success: false, error: 'Cart is empty' },
+        { success: false, error: es ? 'Tu carrito está vacío.' : 'Your cart is empty.' },
         { status: 400 }
       );
     }
     
     if (!customer_email || !customer_first_name || !customer_last_name) {
       return NextResponse.json(
-        { success: false, error: 'Customer information is required' },
+        { success: false, error: es ? 'Por favor ingresa tu correo, nombre y apellido.' : 'Please enter your email, first name and last name.' },
         { status: 400 }
       );
     }
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
     const currentRate = currency === 'MXN' ? await getUsdMxnRate() : null;
     if (currency === 'MXN' && !currentRate) {
       return NextResponse.json(
-        { success: false, error: 'MXN pricing is temporarily unavailable. Please pay in USD.' },
+        { success: false, error: es ? 'Los precios en MXN no están disponibles en este momento. Por favor paga en USD.' : 'MXN pricing is temporarily unavailable. Please pay in USD.' },
         { status: 503 }
       );
     }
@@ -105,7 +107,7 @@ export async function POST(request: NextRequest) {
       
       if (!product || !product.is_active) {
         return NextResponse.json(
-          { success: false, error: `Product not found: ${item.name_en}` },
+          { success: false, error: es ? `Este producto ya no está disponible: ${item.name_es}` : `This product is no longer available: ${item.name_en}` },
           { status: 400 }
         );
       }
