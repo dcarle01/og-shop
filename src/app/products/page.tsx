@@ -1,5 +1,5 @@
 // SHOP_src_app_products_page.tsx
-// Version: 1.1.4 | Created: 2026-01-28 | Last Modified: 2026-04-22 | Author: Open Gateways Team
+// Version: 1.1.5 | Created: 2026-01-28 | Last Modified: 2026-11-19 | Author: Open Gateways Team
 // Description: Products listing page with filtering, sorting, and language selection
 // ✅ Added content language filter for hybrid catalog organization
 
@@ -87,8 +87,8 @@ function ProductsContent() {
         if (sortBy) params.set('sort', sortBy);
         params.set('include_counts', 'true');  // Get language breakdown
         
-        // Handle language filter
-        if (selectedLanguage && selectedLanguage !== 'all') {
+        // Handle language filter (not for Music, which isn't recorded in a language)
+        if (selectedCategory !== 'music' && selectedLanguage && selectedLanguage !== 'all') {
           params.set('lang', selectedLanguage);
           // Always include neutral (music) when filtering by language
           params.set('include_neutral', 'true');
@@ -165,7 +165,7 @@ function ProductsContent() {
       url.searchParams.delete('category');
     }
     
-    if (selectedLanguage && selectedLanguage !== 'all') {
+    if (selectedCategory !== 'music' && selectedLanguage && selectedLanguage !== 'all') {
       url.searchParams.set('lang', selectedLanguage);
     } else {
       url.searchParams.delete('lang');
@@ -178,6 +178,9 @@ function ProductsContent() {
   const otherLanguage = selectedLanguage === 'es' ? 'en' : 'es';
   const otherLanguageCount = languageCounts ? languageCounts[otherLanguage] : 0;
   const selectedCatObj = categories.find(c => c.slug === selectedCategory);
+  // Music isn't recorded in a language, so the language filter doesn't apply to it.
+  const isMusic = selectedCategory === 'music';
+  const languageFilterActive = !isMusic && !!selectedLanguage && selectedLanguage !== 'all';
   const pageTitle = selectedCatObj
     ? (language === 'es'
         ? selectedCatObj.slug === 'music'
@@ -205,7 +208,7 @@ function ProductsContent() {
         {/* Page Header */}
         <div className="page-header">
           <h1>{pageTitle}</h1>
-          {selectedLanguage && selectedLanguage !== 'all' && (
+          {languageFilterActive && (
             <p className="page-subtitle">
               {t.recordedIn} {selectedLanguage === 'en' ? t.englishProducts : t.spanishProducts}
             </p>
@@ -238,7 +241,8 @@ function ProductsContent() {
             <label htmlFor="language-filter">{t.filterByRecordedLanguage}</label>
             <select
               id="language-filter"
-              value={selectedLanguage}
+              value={isMusic ? 'all' : selectedLanguage}
+              disabled={isMusic}
               onChange={(e) => { userHasSetFilters.current = true; setSelectedLanguage(e.target.value); }}
               className="form-select form-input"
             >
@@ -296,7 +300,7 @@ function ProductsContent() {
         </div>
         
         {/* "Also available" hint */}
-        {selectedLanguage && selectedLanguage !== 'all' && otherLanguageCount > 0 && (
+        {languageFilterActive && otherLanguageCount > 0 && (
           <div className="language-hint">
             <span className="hint-icon">💡</span>
             <span>
@@ -322,7 +326,7 @@ function ProductsContent() {
           <div className="empty-state">
             <div className="empty-icon">📦</div>
             <h3>{t.noProductsFound}</h3>
-            {selectedLanguage !== 'all' && (
+            {languageFilterActive && (
               <button
                 className="btn btn-secondary"
                 onClick={() => { userHasSetFilters.current = true; setSelectedLanguage('all'); }}
@@ -384,6 +388,11 @@ function ProductsContent() {
           font-size: 0.85rem;
           color: var(--color-text-muted);
           font-weight: 500;
+        }
+        
+        .filter-group select:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
         
         .filter-search {
